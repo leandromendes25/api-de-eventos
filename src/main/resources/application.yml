@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: eventos-api
+    active: prod
+  profiles:
+    active: prod
+  datasource:
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/eventos_db}
+    username: ${DATASOURCE_USER:user}
+    password: ${DATASOURCE_PASSWORD:user123}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    open-in-view: false
+
+#production
+---
+spring:
+  config:
+    active:
+      on-profile: prod
