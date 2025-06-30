@@ -1,5 +1,6 @@
 package com.leandromendes25.Api_de_eventos.service;
 
+import com.leandromendes25.Api_de_eventos.exceptions.EventNotFoundException;
 import com.leandromendes25.Api_de_eventos.exceptions.OrganizerFoundException;
 import com.leandromendes25.Api_de_eventos.exceptions.RoleUnfitException;
 import com.leandromendes25.Api_de_eventos.model.EventModel;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class EventService {
@@ -36,5 +38,9 @@ public class EventService {
     }
     public List<EventModel> listAll(){
         return evtRepo.findAll();
+    }
+    public EventModel findById(UUID idEvent){
+       return evtRepo.findById(idEvent).orElseThrow(() -> new EventNotFoundException("Evento not found"));
+
     }
 }

@@ -9,82 +9,84 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserFoundException.class)
-    public ResponseEntity<Map<String, String>> handleUserExists(UserFoundException ex) {
+    public ResponseEntity<Map<String, String>> handleUserFound(UserFoundException ex) {
         Map<String, String> error = Map.of("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
+
     @ExceptionHandler(RoleUnfitException.class)
-    public ResponseEntity<Map<String, String>> handleUserExists(RoleUnfitException ex) {
+    public ResponseEntity<Map<String, String>> handleRoleUnfit(RoleUnfitException ex) {
         Map<String, String> error = Map.of("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
+
     @ExceptionHandler(OrganizerFoundException.class)
-    public ResponseEntity<Map<String, String>> handleUserExists(OrganizerFoundException ex) {
+    public ResponseEntity<Map<String, String>> handleOrganizerFound(OrganizerFoundException ex) {
         Map<String, String> error = Map.of("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
+
     @ExceptionHandler(AllReadyRegisteredException.class)
-    public ResponseEntity<Map<String, String>> handleUserExists(AllReadyRegisteredException ex) {
+    public ResponseEntity<Map<String, String>> handleAlreadyRegistered(AllReadyRegisteredException ex) {
         Map<String, String> error = Map.of("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
+
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleUserExists(UserNotFoundException ex) {
+    public ResponseEntity<Map<String, String>> handleUserNotFound(UserNotFoundException ex) {
         Map<String, String> error = Map.of("error", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
+
     @ExceptionHandler(EventNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleUserExists(EventNotFoundException ex) {
+    public ResponseEntity<Map<String, String>> handleEventNotFound(EventNotFoundException ex) {
         Map<String, String> error = Map.of("error", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Map<String, String>> handleDeserializationError(HttpMessageNotReadableException ex) {
-        String message = "Erro ao processar a requisição. Verifique se o JSON está corretamente formatado.";
+        String message = "Failed to process request. Make sure the JSON is correctly formatted.";
 
-        // Enum inválido ou tipo incorreto
         if (ex.getCause() instanceof InvalidFormatException cause) {
-            String campo = cause.getPath().get(0).getFieldName();
-            Class<?> tipo = cause.getTargetType();
+            String field = cause.getPath().get(0).getFieldName();
+            Class<?> targetType = cause.getTargetType();
 
-            if (tipo.isEnum()) {
-                String valores = Arrays.stream(tipo.getEnumConstants())
+            if (targetType.isEnum()) {
+                String allowedValues = Arrays.stream(targetType.getEnumConstants())
                         .map(Object::toString)
                         .collect(Collectors.joining(", "));
-                message = String.format("Valor inválido para o campo '%s'. Valores aceitos: %s", campo, valores);
-            } else if (tipo.equals(Integer.class) || tipo.equals(int.class)) {
-                message = String.format("O campo '%s' deve ser um número inteiro", campo);
-            } else if (tipo.equals(LocalDate.class)) {
-                message = String.format("O campo '%s' deve estar em formato de data (ex: yyyy-MM-dd)", campo);
+                message = String.format("Invalid value for field '%s'. Allowed values are: %s", field, allowedValues);
+            } else if (targetType.equals(Integer.class) || targetType.equals(int.class)) {
+                message = String.format("Field '%s' must be an integer", field);
+            } else if (targetType.equals(LocalDate.class)) {
+                message = String.format("Field '%s' must be a valid date (e.g., yyyy-MM-dd)", field);
             }
         }
 
-        return ResponseEntity.badRequest().body(Map.of("erro", message));
+        return ResponseEntity.badRequest().body(Map.of("error", message));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException ex) {
-        List<String> erros = ex.getBindingResult()
+        List<String> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(erro -> erro.getField() + ": " + erro.getDefaultMessage())
+                .map(err -> err.getField() + ": " + err.getDefaultMessage())
                 .toList();
 
-        Map<String, Object> corpo = new LinkedHashMap<>();
-        corpo.put("status", HttpStatus.BAD_REQUEST.value());
-        corpo.put("mensagem", "Erro de validação nos campos enviados.");
-        corpo.put("erros", erros);
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("message", "Validation error in request body.");
+        body.put("errors", errors);
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(corpo);
-}
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
 }

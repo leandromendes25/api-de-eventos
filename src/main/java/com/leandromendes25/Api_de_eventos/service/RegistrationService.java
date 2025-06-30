@@ -30,14 +30,14 @@ public class RegistrationService {
     private RegistrationRepository regisRepo;
 
     public RegistrationModel createNewRegistration(RegistrationRequestDTO registration, UUID eventId) {
-        var event = evtRepo.findById(eventId).orElseThrow(() -> new EventNotFoundException("Evento não encontrado"));
-        var usr = usrRepo.findById(registration.userId()).orElseThrow(() -> new UserNotFoundException("Usuario não encontrado"));
+        var event = evtRepo.findById(eventId).orElseThrow(() -> new EventNotFoundException("Event not found"));
+        var usr = usrRepo.findById(registration.userId()).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (regisRepo.existsByUserAndEvent(usr, event)) {
-            throw new AllReadyRegisteredException("Usuario já cadastrado");
+            throw new AllReadyRegisteredException("User already registered");
         }
         if (usr.getRole() != Role.PARTICIPANT) {
-            throw new RoleUnfitException("Apenas participantes podem participar");
+            throw new RoleUnfitException("Only participants can participate");
         }
         RegistrationModel registrationModel = new RegistrationModel();
         registrationModel.setEvent(event);

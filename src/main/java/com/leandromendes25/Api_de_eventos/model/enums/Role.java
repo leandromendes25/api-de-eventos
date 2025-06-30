@@ -6,22 +6,22 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum Role {
     PARTICIPANT("Participant"), ORGANIZER("Organizer");
 
-private String descricao;
+private String description;
 
-    Role(String descricao) {
-        this.descricao = descricao;
+    Role(String description) {
+        this.description = description;
     }
     @JsonValue
     public String getDescricao() {
-        return descricao;
+        return description;
     }
     @JsonCreator
-    public static Role fromDescricao(String descricao) {
+    public static Role fromDescricao(String description) {
         for (Role role : Role.values()) {
-            if (role.getDescricao().equalsIgnoreCase(descricao)) {
+            if (role.getDescricao().equalsIgnoreCase(description)) {
                 return role;
             }
         }
-        throw new IllegalArgumentException("Valor inválido para Role: " + descricao);
+        throw new IllegalArgumentException("Valor inválido para Role: " + description);
     }
 }
