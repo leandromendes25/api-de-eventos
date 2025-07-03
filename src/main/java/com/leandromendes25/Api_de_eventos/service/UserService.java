@@ -1,7 +1,7 @@
 package com.leandromendes25.Api_de_eventos.service;
 
-import com.leandromendes25.Api_de_eventos.dto.UserModelRequestDTO;
-import com.leandromendes25.Api_de_eventos.dto.UserModelResponseDTO;
+import com.leandromendes25.Api_de_eventos.dto.user.UserRequestDTO;
+import com.leandromendes25.Api_de_eventos.dto.user.UserResponseDTO;
 import com.leandromendes25.Api_de_eventos.exceptions.UserFoundException;
 import com.leandromendes25.Api_de_eventos.exceptions.UserNotFoundException;
 import com.leandromendes25.Api_de_eventos.model.UserModel;
@@ -18,7 +18,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepo;
 
-    public UserModelResponseDTO createNewUser(UserModelRequestDTO user) {
+    public UserResponseDTO createNewUser(UserRequestDTO user) {
         userRepo.findByEmail(user.email().toLowerCase()).ifPresent((email) -> {
             throw new UserFoundException("User already registered");
         });
@@ -27,19 +27,19 @@ public class UserService {
         userModel.setEmail(user.email());
         userModel.setRole(user.role());
         var userFound = userRepo.save(userModel);
-        return new UserModelResponseDTO(userFound.getId(),userFound.getName(),userFound.getEmail(),userFound.getRole(),userFound.getCreatedAt());
+        return new UserResponseDTO(userFound.getId(),userFound.getName(),userFound.getEmail(),userFound.getRole(),userFound.getCreatedAt());
     }
 
-    public List<UserModelResponseDTO> findAll() {
-        return userRepo.findAll().stream().map(user -> new UserModelResponseDTO(user.getId(),user.getName(),user.getEmail(),user.getRole(),user.getCreatedAt())).toList();
+    public List<UserResponseDTO> findAll() {
+        return userRepo.findAll().stream().map(user -> new UserResponseDTO(user.getId(),user.getName(),user.getEmail(),user.getRole(),user.getCreatedAt())).toList();
     }
 
-    public UserModelResponseDTO updateUser(UUID user, UserModelRequestDTO usr) {
+    public UserResponseDTO updateUser(UUID user, UserRequestDTO usr) {
         var userFound = userRepo.findById(user).orElseThrow(() -> new UserNotFoundException("User not found"));
         userFound.setName(usr.name());
         userFound.setEmail(usr.email().toLowerCase());
         userRepo.save(userFound);
-        return new UserModelResponseDTO(userFound.getId(), userFound.getName(), userFound.getEmail(), userFound.getRole(),userFound.getCreatedAt());
+        return new UserResponseDTO(userFound.getId(), userFound.getName(), userFound.getEmail(), userFound.getRole(),userFound.getCreatedAt());
     }
 
     public void deleteUserById(UUID userId) {

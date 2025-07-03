@@ -4,9 +4,7 @@ import com.leandromendes25.Api_de_eventos.model.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -15,7 +13,9 @@ import java.util.UUID;
 @Entity(name = "tb_user")
 @NoArgsConstructor
 @Data
+@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Builder
 public class UserModel {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

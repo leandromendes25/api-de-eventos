@@ -1,4 +1,4 @@
-package com.leandromendes25.Api_de_eventos.dto;
+package com.leandromendes25.Api_de_eventos.dto.registration;
 
 import java.util.UUID;
 

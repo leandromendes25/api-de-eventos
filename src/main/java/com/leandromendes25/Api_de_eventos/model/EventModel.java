@@ -1,16 +1,16 @@
 package com.leandromendes25.Api_de_eventos.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 @Entity(name = "tb_event")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Builder
 public class EventModel {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

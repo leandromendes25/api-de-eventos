@@ -18,5 +18,3 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     open-in-view: false
-
-  dbgestaoeventos:

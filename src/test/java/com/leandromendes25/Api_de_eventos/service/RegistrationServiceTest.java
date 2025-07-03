@@ -1,5 +1,6 @@
 package com.leandromendes25.Api_de_eventos.service;
 
+import com.leandromendes25.Api_de_eventos.dto.registration.RegistrationRequestDTO;
 import com.leandromendes25.Api_de_eventos.exceptions.EventNotFoundException;
 import com.leandromendes25.Api_de_eventos.exceptions.UserNotFoundException;
 import com.leandromendes25.Api_de_eventos.model.EventModel;
@@ -13,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
-import static org.mockito.ArgumentMatchers.*;
 
 
 import java.util.Optional;
@@ -46,12 +46,14 @@ public class RegistrationServiceTest {
     @Test
     public void shoud_not_be_able_to_register_with_user_not_found(){
         var idEvent = UUID.randomUUID();
+        var idRegistration = UUID.randomUUID();
         var event = new EventModel();
+        var registration = new RegistrationRequestDTO(idRegistration);
         event.setId(idEvent);
         when(evtRepo.findById(idEvent)).thenReturn(Optional.of(event));
 
         try{
-            service.createNewRegistration(null,idEvent);
+            service.createNewRegistration(registration,idEvent);
         }catch (Exception e){
             assertThat(e).isInstanceOf(UserNotFoundException.class);
         }

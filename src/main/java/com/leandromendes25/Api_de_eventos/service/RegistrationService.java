@@ -1,7 +1,7 @@
 package com.leandromendes25.Api_de_eventos.service;
 
-import com.leandromendes25.Api_de_eventos.dto.RegistrationRequestDTO;
-import com.leandromendes25.Api_de_eventos.dto.RegistrationResponseDTO;
+import com.leandromendes25.Api_de_eventos.dto.registration.RegistrationRequestDTO;
+import com.leandromendes25.Api_de_eventos.dto.registration.RegistrationResponseDTO;
 import com.leandromendes25.Api_de_eventos.exceptions.AllReadyRegisteredException;
 import com.leandromendes25.Api_de_eventos.exceptions.EventNotFoundException;
 import com.leandromendes25.Api_de_eventos.exceptions.RoleUnfitException;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +28,7 @@ public class RegistrationService {
     @Autowired
     private RegistrationRepository regisRepo;
 
-    public RegistrationModel createNewRegistration(RegistrationRequestDTO registration, UUID eventId) {
+    public RegistrationResponseDTO createNewRegistration(RegistrationRequestDTO registration, UUID eventId) {
         var event = evtRepo.findById(eventId).orElseThrow(() -> new EventNotFoundException("Event not found"));
         var usr = usrRepo.findById(registration.userId()).orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -39,10 +38,9 @@ public class RegistrationService {
         if (usr.getRole() != Role.PARTICIPANT) {
             throw new RoleUnfitException("Only participants can participate");
         }
-        RegistrationModel registrationModel = new RegistrationModel();
-        registrationModel.setEvent(event);
-        registrationModel.setUser(usr);
-        return regisRepo.save(registrationModel);
+       var result = RegistrationModel.builder().event(event).user(usr).build();
+        regisRepo.save(result);
+        return new RegistrationResponseDTO(event,usr);
     }
 
     public List<RegistrationResponseDTO> findAll(UUID eventId) {

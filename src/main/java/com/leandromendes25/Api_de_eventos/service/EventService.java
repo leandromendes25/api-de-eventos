@@ -1,5 +1,7 @@
 package com.leandromendes25.Api_de_eventos.service;
 
+import com.leandromendes25.Api_de_eventos.dto.event.EventRequestDTO;
+import com.leandromendes25.Api_de_eventos.dto.event.EventResponseDTO;
 import com.leandromendes25.Api_de_eventos.exceptions.EventNotFoundException;
 import com.leandromendes25.Api_de_eventos.exceptions.OrganizerFoundException;
 import com.leandromendes25.Api_de_eventos.exceptions.RoleUnfitException;
@@ -22,25 +24,26 @@ public class EventService {
     @Autowired
     private UserRepository usrRepo;
 
-    public EventModel createNewEvent(EventModel evt){
-    var organizer = usrRepo.findById(evt.getOrganizerUserId()).orElseThrow(() -> new OrganizerFoundException("Organizer not found"));
+    public EventResponseDTO createNewEvent(EventRequestDTO evt){
+    var organizer = usrRepo.findById(evt.organizerUserId()).orElseThrow(() -> new OrganizerFoundException("Organizer not found"));
     if(organizer.getRole() != Role.ORGANIZER){
         throw new RoleUnfitException("Apenas organizadores podem criar eventos");
     }
-    EventModel event = new EventModel();
-    event.setTitle(evt.getTitle());
-    event.setLocal(evt.getLocal());
-    event.setDescription(evt.getDescription());
-    event.setEventDate(evt.getEventDate());
-    event.setOrganizerUser(organizer);
-    event.setOrganizerUserId(organizer.getId());
-    return evtRepo.save(event);
+  var event =  EventModel.builder().title(evt.title())
+            .local(evt.local()).description(evt.description())
+            .eventDate(evt.eventDate()).organizerUser(organizer).organizerUserId(organizer.getId()).build();
+      evtRepo.save(event);
+     return new EventResponseDTO(event.getId(),event.getTitle(), event.getEventDate(),event.getLocal(),event.getOrganizerUserId(), event.getOrganizerUser());
     }
-    public List<EventModel> listAll(){
-        return evtRepo.findAll();
+    public List<EventResponseDTO> listAll(){
+         return evtRepo.findAll().stream().map(event ->
+                 new EventResponseDTO(event.getId(),event.getTitle(),event.getEventDate(),
+                         event.getLocal(),event.getOrganizerUserId(), event.getOrganizerUser())).toList();
     }
-    public EventModel findById(UUID idEvent){
-       return evtRepo.findById(idEvent).orElseThrow(() -> new EventNotFoundException("Evento not found"));
-
+    public EventResponseDTO findById(UUID idEvent){
+       var event = evtRepo.findById(idEvent).orElseThrow(() -> new EventNotFoundException("Evento não encontrado"));
+        return new EventResponseDTO(
+                event.getId(),event.getTitle(),event.getEventDate()
+                ,event.getLocal(),event.getOrganizerUserId(),event.getOrganizerUser());
     }
 }

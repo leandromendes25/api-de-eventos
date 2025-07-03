@@ -1,7 +1,7 @@
 package com.leandromendes25.Api_de_eventos.controller;
 
-import com.leandromendes25.Api_de_eventos.dto.UserModelRequestDTO;
-import com.leandromendes25.Api_de_eventos.dto.UserModelResponseDTO;
+import com.leandromendes25.Api_de_eventos.dto.user.UserRequestDTO;
+import com.leandromendes25.Api_de_eventos.dto.user.UserResponseDTO;
 import com.leandromendes25.Api_de_eventos.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,7 +32,7 @@ public class UserController {
             - A função deve ser informada como `Organizer` ou `Participant`.
             """
     )
-    public ResponseEntity<UserModelResponseDTO> create(@Valid @RequestBody UserModelRequestDTO user) {
+    public ResponseEntity<UserResponseDTO> create(@Valid @RequestBody UserRequestDTO user) {
         var userModel = service.createNewUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
     }
@@ -42,7 +42,7 @@ public class UserController {
             summary = "Listar usuários",
             description = "Retorna uma lista com todos os usuários cadastrados no sistema, independentemente da função."
     )
-    public ResponseEntity<List<UserModelResponseDTO>> findAll() {
+    public ResponseEntity<List<UserResponseDTO>> findAll() {
         return ResponseEntity.ok().body(service.findAll());
     }
 
@@ -54,8 +54,8 @@ public class UserController {
             É necessário fornecer todos os atributos novamente, mesmo que apenas um vá ser alterado.
             """
     )
-    public ResponseEntity<UserModelResponseDTO> update(@PathVariable UUID id, @RequestBody UserModelRequestDTO user) {
-        UserModelResponseDTO updated = service.updateUser(id, user);
+    public ResponseEntity<UserResponseDTO> update(@PathVariable UUID id, @RequestBody UserRequestDTO user) {
+        UserResponseDTO updated = service.updateUser(id, user);
         return ResponseEntity.status(HttpStatus.CREATED).body(updated);
     }
 

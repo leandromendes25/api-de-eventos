@@ -1,9 +1,7 @@
 package com.leandromendes25.Api_de_eventos.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -12,7 +10,9 @@ import java.util.UUID;
 @Entity(name = "tb_registration")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Builder
 public class RegistrationModel {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
