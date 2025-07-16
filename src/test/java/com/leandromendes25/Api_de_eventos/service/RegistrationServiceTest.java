@@ -4,6 +4,8 @@ import com.leandromendes25.Api_de_eventos.dto.registration.RegistrationRequestDT
 import com.leandromendes25.Api_de_eventos.exceptions.EventNotFoundException;
 import com.leandromendes25.Api_de_eventos.exceptions.UserNotFoundException;
 import com.leandromendes25.Api_de_eventos.model.EventModel;
+import com.leandromendes25.Api_de_eventos.model.RegistrationModel;
+import com.leandromendes25.Api_de_eventos.model.UserModel;
 import com.leandromendes25.Api_de_eventos.repository.EventRepository;
 import com.leandromendes25.Api_de_eventos.repository.RegistrationRepository;
 import com.leandromendes25.Api_de_eventos.repository.UserRepository;
@@ -58,4 +60,5 @@ public class RegistrationServiceTest {
             assertThat(e).isInstanceOf(UserNotFoundException.class);
         }
     }
+
 }

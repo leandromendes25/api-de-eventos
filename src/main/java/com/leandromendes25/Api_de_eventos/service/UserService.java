@@ -7,6 +7,7 @@ import com.leandromendes25.Api_de_eventos.exceptions.UserNotFoundException;
 import com.leandromendes25.Api_de_eventos.model.UserModel;
 import com.leandromendes25.Api_de_eventos.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,8 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepo;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public UserResponseDTO createNewUser(UserRequestDTO user) {
         userRepo.findByEmail(user.email().toLowerCase()).ifPresent((email) -> {
@@ -24,8 +27,10 @@ public class UserService {
         });
         UserModel userModel = new UserModel();
         userModel.setName(user.name());
-        userModel.setEmail(user.email());
+        userModel.setEmail(user.email().toLowerCase());
         userModel.setRole(user.role());
+        var password = passwordEncoder.encode(user.password());
+        userModel.setPassword(password);
         var userFound = userRepo.save(userModel);
         return new UserResponseDTO(userFound.getId(),userFound.getName(),userFound.getEmail(),userFound.getRole(),userFound.getCreatedAt());
     }
@@ -38,6 +43,8 @@ public class UserService {
         var userFound = userRepo.findById(user).orElseThrow(() -> new UserNotFoundException("User not found"));
         userFound.setName(usr.name());
         userFound.setEmail(usr.email().toLowerCase());
+        userFound.setPassword(usr.password());
+        userFound.setRole(usr.role());
         userRepo.save(userFound);
         return new UserResponseDTO(userFound.getId(), userFound.getName(), userFound.getEmail(), userFound.getRole(),userFound.getCreatedAt());
     }

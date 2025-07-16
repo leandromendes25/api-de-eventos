@@ -4,6 +4,7 @@ import com.leandromendes25.Api_de_eventos.model.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -25,6 +26,9 @@ public class UserModel {
     private String name;
     @Email(message = "Email field must be valid")
     private String email;
+    @Size(min = 8, message = "The minimum password strength must be 8 ")
+    @NotBlank
+    private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
     @CreationTimestamp

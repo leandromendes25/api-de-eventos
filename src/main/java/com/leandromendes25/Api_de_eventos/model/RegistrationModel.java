@@ -19,11 +19,15 @@ public class RegistrationModel {
     @EqualsAndHashCode.Include
     private UUID id;
     @ManyToOne
-    @JoinColumn(name = "id_event")
+    @JoinColumn(name = "id_event", insertable = false, updatable = false)
     private EventModel event;
+    @Column(name = "id_event")
+    private UUID eventId;
     @ManyToOne
-    @JoinColumn(name = "id_user")
+    @JoinColumn(name = "id_user", insertable = false, updatable = false)
     private UserModel user;
+    @Column(name = "id_user")
+    private UUID userId;
     @CreationTimestamp
     private LocalDateTime registrationDate;
 }
